@@ -2,28 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bond Movie Zone</title>
+  <title>Bond Movie Browser</title>
   <style>
     body {
       font-family: Georgia, serif;
-      background-color: #f9f9f9;
+      background-color: #f0f0f0;
       padding: 20px;
-      color: #222;
+    }
+
+    h1 {
+      color: #333;
     }
 
     .film {
-      border: 1px solid #E77DC2;
+      border: 2px solid #e77dc2;
       border-radius: 6px;
       padding: 10px;
-      margin-bottom: 12px;
+      margin: 10px 0;
       background-color: #fff;
       position: relative;
     }
 
     .pic {
       position: absolute;
-      right: 15px;
-      top: 15px;
+      top: 10px;
+      right: 10px;
     }
 
     .pic img {
@@ -37,51 +40,38 @@
       margin-top: 15px;
     }
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
-    }
-
-    a.category {
+    .category {
       display: inline-block;
-      margin-right: 20px;
-      color: #A60A88;
+      margin-right: 10px;
+      color: #0077cc;
       text-decoration: none;
       font-weight: bold;
     }
 
-    a.category:hover {
+    .category:hover {
       text-decoration: underline;
-    }
-
-    #filmtitle {
-      margin-top: 25px;
-      color: #444;
-    }
-
-    #films, #output {
-      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Bond Movie Zone</h1>
+  <h1>Bond Movie Browser</h1>
 
-  <a href="year" class="category">Films by Year</a>
-  <a href="box" class="category">Box Office Rankings</a>
+  <a href="year" class="category">Browse by Year</a>
+  <a href="box" class="category">Sort by Box Office</a>
 
-  <h3 id="filmtitle">Pick a category to see some classics</h3>
+  <h3 id="filmtitle">Pick a category above to load films</h3>
 
   <div id="loader">
     <img src="images/spinner.gif" alt="Loading..." />
   </div>
 
-  <div id="films"><p>Films will drop here.</p></div>
-  <div id="output">Results pop up below ⬇️</div>
+  <div id="films"><p>Movie results will show up here.</p></div>
+  <div id="output"></div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".category").forEach(link => {
+      const links = document.querySelectorAll(".category");
+      links.forEach(link => {
         link.addEventListener("click", e => {
           e.preventDefault();
           const cat = link.getAttribute("href");
@@ -90,33 +80,30 @@
       });
     });
 
-    // Keeping the same base URL to keep the backend working
-    var url = "https://cautious-system-5gxvjvxvw564fpxrw-3000.app.github.dev/";
+    const url = "https://newmanix.com/classes/it122/bond-web-service/";
 
     async function loadAJAX(cat) {
       document.getElementById("output").innerHTML = "";
-      document.getElementById("filmtitle").innerHTML = "";
+      document.getElementById("filmtitle").textContent = "";
       document.getElementById("loader").style.display = "block";
 
-      const endpoint = url + "api.php?cat=" + cat;
+      const endpoint = `${url}api.php?cat=${cat}`;
 
       try {
-        const response = await fetch(endpoint, { method: "GET", mode: "cors" });
-        if (!response.ok) throw new Error("HTTP error " + response.status);
+        const res = await fetch(endpoint, { method: "GET", mode: "cors" });
+        if (!res.ok) throw new Error("HTTP error " + res.status);
         
-        const data = await response.json();
+        const data = await res.json();
         console.log(data);
-        
+
         data.films.forEach(film => {
           const filmHTML = bondTemplate(film);
           document.getElementById("output").innerHTML += filmHTML;
         });
 
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("filmtitle").innerText = `Showing: ${cat.toUpperCase()} Bond Films`;
-
       } catch (err) {
-        document.getElementById("output").innerText = "Couldn't load the info: " + err;
+        document.getElementById("output").textContent = "Couldn't load data: " + err;
+      } finally {
         document.getElementById("loader").style.display = "none";
       }
     }
@@ -124,17 +111,17 @@
     function bondTemplate(film) {
       return `
         <div class="film">
-          <b>Film</b>: ${film.Film}<br>
-          <b>Title</b>: ${film.Title}<br>
-          <b>Year</b>: ${film.Year}<br>
-          <b>Director</b>: ${film.Director}<br>
-          <b>Producers</b>: ${film.Producers}<br>
-          <b>Writers</b>: ${film.Writers}<br>
-          <b>Composer</b>: ${film.Composer}<br>
-          <b>Bond</b>: ${film.Bond}<br>
-          <b>Budget</b>: ${film.Budget}<br>
-          <b>Box Office</b>: ${film.BoxOffice}<br>
-          <div class="pic"><img src="${url}thumbnails/${film.Image}"></div>
+          <b>Film:</b> ${film.Film}<br>
+          <b>Title:</b> ${film.Title}<br>
+          <b>Year:</b> ${film.Year}<br>
+          <b>Director:</b> ${film.Director}<br>
+          <b>Producers:</b> ${film.Producers}<br>
+          <b>Writers:</b> ${film.Writers}<br>
+          <b>Composer:</b> ${film.Composer}<br>
+          <b>Bond:</b> ${film.Bond}<br>
+          <b>Budget:</b> ${film.Budget}<br>
+          <b>Box Office:</b> ${film.BoxOffice}<br>
+          <div class="pic"><img src="${url}thumbnails/${film.Image}" alt="Bond Thumbnail"></div>
         </div>
       `;
     }
