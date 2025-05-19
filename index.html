@@ -1,11 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Bond API Codespace</title>
+  <meta charset="UTF-8">
+  <title>Bond Movie Zone</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      color: #222;
+    }
+
+    .film {
+      border: 1px solid #E77DC2;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 12px;
+      background-color: #fff;
+      position: relative;
+    }
+
+    .pic {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+    }
+
+    .pic img {
+      max-width: 60px;
+      border-radius: 4px;
+    }
+
+    #loader {
+      display: none;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    a.category {
+      display: inline-block;
+      margin-right: 20px;
+      color: #A60A88;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a.category:hover {
+      text-decoration: underline;
+    }
+
+    #filmtitle {
+      margin-top: 25px;
+      color: #444;
+    }
+
+    #films, #output {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Bond API Codespace</h1>
-  <p>The file, <b>api.php</b> provides access to data about the Bond series of films.</b></p>
+  <h1>Bond Movie Zone</h1>
+
+  <a href="year" class="category">Films by Year</a>
+  <a href="box" class="category">Box Office Rankings</a>
+
+  <h3 id="filmtitle">Pick a category to see some classics</h3>
+
+  <div id="loader">
+    <img src="images/spinner.gif" alt="Loading..." />
+  </div>
+
+  <div id="films"><p>Films will drop here.</p></div>
+  <div id="output">Results pop up below ⬇️</div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".category").forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          const cat = link.getAttribute("href");
+          loadAJAX(cat);
+        });
+      });
+    });
+
+    // Keeping the same base URL to keep the backend working
+    var url = "https://cautious-system-5gxvjvxvw564fpxrw-3000.app.github.dev/";
+
+    async function loadAJAX(cat) {
+      document.getElementById("output").innerHTML = "";
+      document.getElementById("filmtitle").innerHTML = "";
+      document.getElementById("loader").style.display = "block";
+
+      const endpoint = url + "api.php?cat=" + cat;
+
+      try {
+        const response = await fetch(endpoint, { method: "GET", mode: "cors" });
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        
+        const data = await response.json();
+        console.log(data);
+        
+        data.films.forEach(film => {
+          const filmHTML = bondTemplate(film);
+          document.getElementById("output").innerHTML += filmHTML;
+        });
+
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("filmtitle").innerText = `Showing: ${cat.toUpperCase()} Bond Films`;
+
+      } catch (err) {
+        document.getElementById("output").innerText = "Couldn't load the info: " + err;
+        document.getElementById("loader").style.display = "none";
+      }
+    }
+
+    function bondTemplate(film) {
+      return `
+        <div class="film">
+          <b>Film</b>: ${film.Film}<br>
+          <b>Title</b>: ${film.Title}<br>
+          <b>Year</b>: ${film.Year}<br>
+          <b>Director</b>: ${film.Director}<br>
+          <b>Producers</b>: ${film.Producers}<br>
+          <b>Writers</b>: ${film.Writers}<br>
+          <b>Composer</b>: ${film.Composer}<br>
+          <b>Bond</b>: ${film.Bond}<br>
+          <b>Budget</b>: ${film.Budget}<br>
+          <b>Box Office</b>: ${film.BoxOffice}<br>
+          <div class="pic"><img src="${url}thumbnails/${film.Image}"></div>
+        </div>
+      `;
+    }
+  </script>
 </body>
 </html>
