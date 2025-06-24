@@ -95,18 +95,19 @@
       });
     });
 
-    const url = "https://bug-free-enigma-jjqrx999v95q3qgpw-3000.app.github.dev/";
+    const url = ""; // No remote base URL needed for local JSON
 
     async function loadAJAX(cat) {
       document.getElementById("output").innerHTML = "";
       document.getElementById("filmtitle").textContent = "";
       document.getElementById("loader").style.display = "block";
 
+      // Use local JSON files
       let endpoint = "";
       if (cat === "year") {
-        endpoint = url + "api.php";
+        endpoint = "data/bond-year.json";
       } else if (cat === "box") {
-        endpoint = url + "api.php?cat=box";
+        endpoint = "data/bond-box-office.json";
       }
 
       try {
@@ -125,7 +126,9 @@
       }
     }
 
+    // Template for displaying each Bond film
     function bondTemplate(film) {
+      // Use local thumbnails directory for images
       return `
         <div class="film">
           <b>Film:</b> ${film.Film}<br>
@@ -138,7 +141,7 @@
           <b>Bond:</b> ${film.Bond}<br>
           <b>Budget:</b> ${film.Budget}<br>
           <b>Box Office:</b> ${film.BoxOffice}<br>
-          <div class="pic"><img src="${url}thumbnails/${film.Image}" alt="Bond Thumbnail"></div>
+          <div class="pic"><img src="thumbnails/${film.Image}" alt="Bond Thumbnail"></div>
         </div>
       `;
     }
