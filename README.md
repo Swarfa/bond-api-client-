@@ -26,3 +26,43 @@ On the right-hand side, under the "Visibility" column, if it says "Private", cli
 - Built-in server on port 3000
 - Forwarded port for testing
 - PHP API to be consumed as a web service
+
+# Bond API Client
+
+A web client for browsing James Bond films using a PHP API web service. This client fetches and displays Bond film data, allowing sorting by release date or box office.
+
+## Features
+- Fetches Bond film data from a PHP API (see below for setup)
+- Toggle between sorting by release date or box office
+- Displays film thumbnails from the local `/thumbnails` directory
+- Clean, white-themed UI
+- CSS spinner for loading state
+
+## Getting Started
+
+1. **Clone or fork this repo** to your GitHub account.
+2. **Ensure the Bond API (PHP) server is running** (see the API repo for setup instructions).
+3. **Make the API port public** in Codespaces so your client can access it.
+4. **Update the API endpoint in `index.html` if needed** (currently set for local use).
+5. **Open `index.html` in your browser** to use the client locally, or deploy to GitHub Pages (see below).
+
+## Using the Client
+- Click "Browse by Year" to view films sorted by release date.
+- Click "Sort by Box Office" to view films sorted by box office.
+- Thumbnails are loaded from the `/thumbnails` directory for each film.
+
+## Deployment
+- You can deploy this client to GitHub Pages for public access.
+- Ensure your API endpoint is accessible from the deployed site (public Codespace port).
+
+## Customization
+- The UI uses a pure white background for a clean look.
+- A CSS spinner is used for loading feedback.
+- Film images are loaded from the local `/thumbnails` directory for fast performance.
+
+## Credits
+- Bond film data and images for educational use only.
+
+---
+
+*For any issues or questions, please contact the repo maintainer.*
